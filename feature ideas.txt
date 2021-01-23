@@ -1,0 +1,14 @@
+Predict: Home Team Win
+Home Team O Rating
+Home Team O Rating Last 5 Trend
+Home Team D Rating
+Home Team D Rating Last 5 Trend
+Away Team O Rating
+Away Team O Rating Last 5 Trend
+Away Team D Rating
+Away Team D Rating Last 5 Trend
+Home Team All Star Last 3 Years
+Away Team All Star Last 3 Years
+Home Team MVP Votes Last 3 Years
+Away Team MVP Votes Last 3 Years
+
