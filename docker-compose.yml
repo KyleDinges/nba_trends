@@ -1,0 +1,80 @@
+version: '3.7'
+services:
+  postgres:
+    image: postgres:9.6
+    environment:
+      - POSTGRES_USER=airflow
+      - POSTGRES_PASSWORD=airflow
+      - POSTGRES_DB=airflow
+  redis:
+    image: redis:5.0.5
+  webserver:
+    image: webserver:latest
+    build:
+      context: .
+    restart: always
+    depends_on:
+      - postgres
+      - redis
+    environment:
+      - LOAD_EX=n
+      - FERNET_KEY=46BKJoQYlPPOexq0OhDZnIlNepKFf87WFwLbfzqDDho=
+      - EXECUTOR=Celery
+      - PYTHONPATH=/usr/local/airflow
+    volumes:
+      - C:/Users/KyleE/nba/airflow/dags:/usr/local/airflow/dags
+      - C:/Users/KyleE/nba/data:/usr/local/airflow/data
+      - C:/Users/KyleE/nba/nba_tools:/usr/local/airflow/nba_tools
+    ports:
+      - "8080:8080"
+    command: webserver
+    healthcheck:
+      test: ["CMD-SHELL", "[ -f /usr/local/airflow/airflow-webserver.pid ]"]
+      interval: 30s
+      timeout: 30s
+      retries: 3
+  scheduler:
+    image: scheduler:latest
+    build:
+      context: .
+    restart: always
+    depends_on:
+      - webserver
+    volumes:
+      - C:/Users/KyleE/nba/airflow/dags:/usr/local/airflow/dags
+      - C:/Users/KyleE/nba/data:/usr/local/airflow/data
+      - C:/Users/KyleE/nba/nba_tools:/usr/local/airflow/nba_tools
+    environment:
+      - LOAD_EX=n
+      - FERNET_KEY=46BKJoQYlPPOexq0OhDZnIlNepKFf87WFwLbfzqDDho=
+      - EXECUTOR=Celery
+      - PYTHONPATH=/usr/local/airflow
+    command: scheduler
+  worker1:
+    image: worker1:latest
+    build:
+     context: .
+    restart: always
+    depends_on:
+     - scheduler
+    volumes:
+     - C:/Users/KyleE/nba/airflow/dags:/usr/local/airflow/dags
+     - C:/Users/KyleE/nba/data:/usr/local/airflow/data
+     - C:/Users/KyleE/nba/nba_tools:/usr/local/airflow/nba_tools
+    environment:
+      - FERNET_KEY=46BKJoQYlPPOexq0OhDZnIlNepKFf87WFwLbfzqDDho=
+      - EXECUTOR=Celery
+      - PYTHONPATH=/usr/local/airflow
+    command: worker
+  flower:
+      image: flower:latest
+      build:
+        context: .
+      restart: always
+      depends_on:
+        - redis
+      environment:
+        - EXECUTOR=Celery
+      ports:
+        - "5555:5555"
+      command: flower

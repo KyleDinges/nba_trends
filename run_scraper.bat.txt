@@ -1,2 +1,0 @@
-"C:\ProgramData\Anaconda3\python.exe" "C:\Users\KyleE\nba\ratings_scraper.py"
-pause
